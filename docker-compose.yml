@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./front-end
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: "http://backend:8000"  # Fixed syntax
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    build: ./back-end
+    ports:
+      - "8000:8000"
+    environment:  # Fixed indentation and syntax
+      DB_HOST: "db"
+      DB_PORT: "3306"
+      DB_DATABASE: "mydb"
+      DB_USERNAME: "root"
+      DB_PASSWORD: "supersecret"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:  # Fixed syntax
+      MYSQL_ROOT_PASSWORD: "supersecret"
+      MYSQL_DATABASE: "mydb"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-psupersecret"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:

@@ -1,0 +1,9 @@
+vendor/
+storage/logs/
+.env
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.md
+*.log
