@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         IMAGE_NAME = "neima/clms-backend"
+        CONTAINER_NAME = "clms-backend"
+        PORT = "8000"
     }
 
     stages {
@@ -22,6 +24,19 @@ pipeline {
                             docker.image("${IMAGE_NAME}:latest").push()
                         }
                     }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    
+                    sh """
+                        docker pull ${IMAGE_NAME}:latest
+                        docker stop ${CONTAINER_NAME} || true
+                        docker rm ${CONTAINER_NAME} || true
+                        docker run -d --name ${CONTAINER_NAME} -p ${PORT}:${PORT} ${IMAGE_NAME}:latest
+                    """
                 }
             }
         }
