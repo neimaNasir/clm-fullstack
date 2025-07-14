@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   frontend:
     build: ./front-end
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: "http://backend:8000"  # Fixed syntax
+      NEXT_PUBLIC_API_URL: "http://backend:8000"  
     depends_on:
       backend:
         condition: service_healthy
@@ -15,12 +13,14 @@ services:
     build: ./back-end
     ports:
       - "8000:8000"
-    environment:  # Fixed indentation and syntax
+    environment:  
       DB_HOST: "db"
       DB_PORT: "3306"
       DB_DATABASE: "mydb"
       DB_USERNAME: "root"
       DB_PASSWORD: "supersecret"
+    volumes:
+      - ./back-end/.env:/var/www/.env 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 10s
